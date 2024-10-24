@@ -1,5 +1,46 @@
 #!/bin/bash
 
+os_version() {
+    echo "### OS Version ###"
+    if [ -f /etc/os-release ]; then
+        os=$(grep -w "PRETTY_NAME" /etc/os-release | cut -d '"' -f2)
+        echo "Operating System: $os"
+    else
+    echo "Operating System info not available"
+    fi
+    echo
+}
+
+system_uptime() {
+    echo "### Uptime and Load Average ###"
+    uptime_info=$(uptime -p)
+    load_avg=$(uptime | awk -F 'load average:' '{print $2}')
+    echo "System Uptime: $uptime_info"
+    echo "Load Average (1 min, 5 min, 15 min):$load_avg"
+    echo
+}
+
+logged_in_users() {
+    echo "### Logged In Users ###"
+    who | awk '{print $1}' | sort | uniq -c
+    echo
+}
+
+failed_logins() {
+    echo "### Failed Login Attempts ###"
+    if [ -f /var/log/auth.log ]; then
+        log_file="/var/log/auth.log"
+    elif [ -f /var/log/secure ]; then
+        log_file="/var/log/secure"
+    else
+        echo "Log file for failed logins not found!"
+        return
+    fi
+
+    failed_attempts=$(grep "Failed password" $log_file | wc -l)
+    echo "Number of failed login attempts: $failed_attempts"
+    echo
+}
 cpu_usage() {
     echo "### CPU Usage ###"
     cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $8}')
