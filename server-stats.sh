@@ -94,6 +94,10 @@ top_mem_proc() {
 
 echo "Server Performance Stats:"
 echo "========================="
+os_version
+system_uptime
+logged_in_users
+failed_logins
 cpu_usage
 memory_usage
 disk_usage
